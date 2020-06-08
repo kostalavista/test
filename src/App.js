@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react';
+import {hubConnectionChat} from "./sockets";
 
-function App() {
+const App = () => {
+  useEffect(() => {
+    console.log('started');
+
+    hubConnectionChat.start()
+    .then(() => {
+      console.log('hubConnectionChat started')
+    }).catch(error => {
+      console.log(error)
+    });
+
+    hubConnectionChat.on('Send', messageModel => {
+      console.log(messageModel)
+    });
+  }, []);
+
+  const sendMessage = () => {
+    hubConnectionChat.invoke('Send', '11111111111')
+    .catch(err => {
+      console.log(err);
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button onClick={sendMessage}>Send text</button>
     </div>
   );
-}
+};
 
 export default App;
